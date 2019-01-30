@@ -40,6 +40,8 @@ describe('foods API interraction', () => {
     response.body[0].name.should.equal('Kiwi');
     response.body[0].should.have.property('calories');
     response.body[0].calories.should.equal(45);
+    response.body[11].name.should.equal('Almonds');
+    response.body[11].calories.should.equal(120);
     done();
     });
   });
