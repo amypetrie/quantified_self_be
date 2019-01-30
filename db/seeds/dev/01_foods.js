@@ -1,12 +1,9 @@
 exports.seed = function(knex, Promise) {
-  // We must return a Promise from within our seed function
-  // Without this initial `return` statement, the seed execution
-  // will end before the asynchronous tasks have completed
-  return knex('foods').del()
-    // Now that we have a clean slate, we can re-insert our data
+  // return knex('foods').del()
+  return knex.raw('TRUNCATE foods RESTART IDENTITY CASCADE')
+
     .then(() => {
       return Promise.all([
-        // Insert a single paper, return the paper ID, insert 2 footnotes
         knex('foods').insert([
           { name: 'Kiwi', calories: 45},
           { name: 'Filet Mignon', calories: 225},
@@ -14,6 +11,11 @@ exports.seed = function(knex, Promise) {
           { name: 'Lentils', calories: 80},
           { name: 'Corn Tortilla', calories: 25},
           { name: 'Guacamole', calories: 150},
+          { name: 'Cereal', calories: 110},
+          { name: 'Wedge Salad', calories: 200},
+          { name: 'Bacon', calories: 60},
+          { name: 'Eggs', calories: 170},
+          { name: 'Cheese', calories: 80},
           { name: 'Almonds', calories: 120}], 'id')
         .then(() => console.log('Seeding complete!'))
         .catch(error => console.log(`Error seeding data: ${error}`))
