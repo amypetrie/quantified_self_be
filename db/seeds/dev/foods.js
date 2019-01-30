@@ -8,13 +8,13 @@ exports.seed = function(knex, Promise) {
       return Promise.all([
         // Insert a single paper, return the paper ID, insert 2 footnotes
         knex('foods').insert([
-          { name: 'Kiwi', calories: '45'},
-          { name: 'Filet Mignon', calories: '225'},
-          { name: 'Popcorn', calories: '100'},
-          { name: 'Lentils', calories: '80'},
-          { name: 'Corn Tortilla', calories: '25'},
-          { name: 'Guacamole', calories: '150'},
-          { name: 'Almonds', calories: 'Bob'}], '110')
+          { name: 'Kiwi', calories: 45},
+          { name: 'Filet Mignon', calories: 225},
+          { name: 'Popcorn', calories: 100},
+          { name: 'Lentils', calories: 80},
+          { name: 'Corn Tortilla', calories: 25},
+          { name: 'Guacamole', calories: 150},
+          { name: 'Almonds', calories: 120}], 'id')
         .then(() => console.log('Seeding complete!'))
         .catch(error => console.log(`Error seeding data: ${error}`))
       ]) // end return Promise.all
