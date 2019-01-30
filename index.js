@@ -20,4 +20,14 @@ app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
 
+app.get('/api/v1/foods', (request, response) => {
+  database('foods').select()
+    .then((foods) => {
+      response.status(200).json(foods);
+    })
+    .catch((error) => {
+      response.status(500).json({ error });
+    });
+});
+
 module.exports = app;

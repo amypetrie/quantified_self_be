@@ -12,7 +12,7 @@ const database = require('knex')(configuration);
 
 chai.use(chaiHttp);
 
-describe('API GET Routes', () => {
+describe('foods API interraction', () => {
   before((done) => {
     database.migrate.latest()
       .then(() => done())
@@ -20,21 +20,28 @@ describe('API GET Routes', () => {
         throw error;
       });
     });
-  // before((done) => {
-  //   database.seed.run()
-  //     .then(() => done())
-  //     .catch(error => {
-  //       throw error;
-  //     });
-  // });
+  before((done) => {
+    database.seed.run()
+      .then(() => done())
+      .catch(error => {
+        throw error;
+      });
+  });
 
-  it('should return the homepage with text', done => {
+  it('GET api/v1/foods returns all foods', done => {
   chai.request(server)
-  .get('/')
+  .get('/api/v1/foods')
   .end((err, response) => {
     response.should.have.status(200);
-    response.should.be.html;
-    response.res.text.should.equal('Hello, Quantified Self');
+    response.should.be.json;
+    response.body.should.be.a('array');
+    response.body.length.should.equal(12);
+    response.body[0].should.have.property('name');
+    response.body[0].name.should.equal('Kiwi');
+    response.body[0].should.have.property('calories');
+    response.body[0].calories.should.equal(45);
+    response.body[11].name.should.equal('Almonds');
+    response.body[11].calories.should.equal(120);
     done();
     });
   });
