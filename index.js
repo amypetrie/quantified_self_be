@@ -30,6 +30,4 @@ app.get('/api/v1/foods', (request, response) => {
     });
 });
 
-
-
 module.exports = app;
