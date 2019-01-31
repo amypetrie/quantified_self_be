@@ -26,7 +26,7 @@ describe('foods API interraction', () => {
       .catch(error => {
         throw error;
       });
-  });
+    });
 
   it('GET api/v1/foods returns all foods', done => {
   chai.request(server)
@@ -70,6 +70,23 @@ describe('foods API interraction', () => {
     done();
     });
   });
+});
+
+describe('PUT and POST API interaction', () => {
+  before((done) => {
+    database.migrate.latest()
+      .then(() => done())
+      .catch(error => {
+        throw error;
+      });
+    });
+  beforeEach((done) => {
+    database.seed.run()
+      .then(() => done())
+      .catch(error => {
+        throw error;
+      });
+    });
 
   it('POST api/v1/foods returns new food if successful', done => {
   chai.request(server)
@@ -108,6 +125,50 @@ describe('foods API interraction', () => {
     response.should.have.status(422);
     response.body.should.be.a('object');
     response.body.should.have.property('error');
+    done();
+    });
+  });
+
+  it('PATCH api/v1/foods/:id updates an existing food', done => {
+  chai.request(server)
+  .patch('/api/v1/foods/1')
+  .send({ 'name': 'Peaches', 'calories': '50' })
+  .end((err, response) => {
+    response.should.have.status(202);
+    response.body.should.be.a('object');
+    response.body.should.have.property('id');
+    response.body.id.should.equal(1);
+    response.body.should.have.property('name');
+    response.body.name.should.equal('Peaches');
+    response.body.should.have.property('calories');
+    response.body.calories.should.equal(50);
+    done();
+    });
+  });
+
+  it('PATCH api/v1/foods/:id updates a single attribute of existing food', done => {
+  chai.request(server)
+  .patch('/api/v1/foods/1')
+  .send({ 'calories': '30'})
+  .end((err, response) => {
+    response.should.have.status(202);
+    response.body.should.be.a('object');
+    response.body.should.have.property('id');
+    response.body.id.should.equal(1);
+    response.body.should.have.property('name');
+    response.body.name.should.equal('Kiwi');
+    response.body.should.have.property('calories');
+    response.body.calories.should.equal(30);
+    done();
+    });
+  });
+
+  it('PATCH api/v1/foods/:id does not update calories if NaN is provided', done => {
+  chai.request(server)
+  .patch('/api/v1/foods/1')
+  .send({ 'calories': 'fdsa'})
+  .end((err, response) => {
+    response.should.have.status(500);
     done();
     });
   });
