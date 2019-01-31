@@ -48,6 +48,16 @@ app.get('/api/v1/foods/:id', (request, response) => {
     });
 });
 
+app.delete('/api/v1/foods/:id', (request, response) => {
+  database('foods').where('id', request.params.id).del()
+    .then(food => {
+      response.status(204).json({});
+    })
+    .catch(error => {
+      response.status(404).json({ error });
+    });
+});
+
 app.post('/api/v1/foods', (request, response) => {
   const food = request.body;
 

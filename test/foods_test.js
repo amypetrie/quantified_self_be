@@ -70,6 +70,25 @@ describe('foods API interraction', () => {
     done();
     });
   });
+
+  it('DELETE api/v1/foods/:id deletes the food', done => {
+  chai.request(server)
+  .delete('/api/v1/foods/1')
+  .end((err, response) => {
+    response.should.have.status(204);
+    done();
+    });
+  });
+
+  it('DELETE api/v1/foods/:id returns 404 if food not found', done => {
+  chai.request(server)
+  .delete('/api/v1/foods/20')
+  .end((err, response) => {
+    response.should.have.status(204);
+    done();
+    });
+  });
+
 });
 
 describe('PUT and POST API interaction', () => {
