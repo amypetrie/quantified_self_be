@@ -112,4 +112,21 @@ describe('foods API interraction', () => {
     });
   });
 
+  it('PATCH api/v1/foods/:id updates an existing food', done => {
+  chai.request(server)
+  .patch('/api/v1/foods/1')
+  .send({ 'name': 'Peaches', 'calories': '50' })
+  .end((err, response) => {
+    response.should.have.status(202);
+    response.body.should.be.a('object');
+    response.body.should.have.property('id');
+    response.body.id.should.equal(1);
+    response.body.should.have.property('name');
+    response.body.name.should.equal('Peaches');
+    response.body.should.have.property('calories');
+    response.body.calories.should.equal(50);
+    done();
+    });
+  });
+
 });

@@ -66,4 +66,25 @@ app.post('/api/v1/foods', (request, response) => {
       });
   });
 
+  app.patch('/api/v1/foods/:id', (request, response) => {
+    const updates = request.body;
+
+    for (let requiredParameter of ['name', 'calories']) {
+      if (!updates[requiredParameter]) {
+        return response
+          .status(422)
+          .send({ error: `Expected format: { name: <String>, calories: <integer> }. You're missing a "${requiredParameter}" property.` });
+      }
+
+    const cals = parseInt(updates['calories']);
+
+    database('foods').where('id', request.params.id).update(({name: updates['name'], calories: cals}), ['id', 'name', 'calories'])
+      .then(food => {
+        response.status(202).json(food[0])
+      })
+        .catch(error => {
+        response.status(500).json({ error });
+      });
+    });
+
 module.exports = app;
