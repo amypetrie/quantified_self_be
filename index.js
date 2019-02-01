@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 app.set('port', process.env.PORT || 3000);
-app.locals.title = 'Publications';
+app.locals.title = 'quantified_self';
 
 app.get('/', (request, response) => {
   response.send('Hello, Quantified Self');
@@ -49,7 +49,8 @@ app.get('/api/v1/foods/:id', (request, response) => {
 });
 
 app.delete('/api/v1/foods/:id', (request, response) => {
-  database('foods').where('id', request.params.id).del()
+  return database('mealfoods').where('food_id', request.params.id).del()
+  .then(() => database('foods').where('id', request.params.id).del())
     .then(food => {
       response.status(204).json({});
     })
@@ -76,30 +77,30 @@ app.post('/api/v1/foods', (request, response) => {
       .catch(error => {
         response.status(500).json({ error });
       });
-  });
+});
 
-  app.patch('/api/v1/foods/:id', (request, response) => {
-    const updates = request.body;
-    const cals = Number(updates['calories']);
+app.patch('/api/v1/foods/:id', (request, response) => {
+  const updates = request.body;
+  const cals = Number(updates['calories']);
 
-    request.checkBody('name', 'Invalid name').isAlpha();
-    request.checkBody('calories', 'Invalid calories').isNumeric();
+  request.checkBody('name', 'Invalid name').isAlpha();
+  request.checkBody('calories', 'Invalid calories').isNumeric();
 
-    var errors = request.validationErrors();
+  var errors = request.validationErrors();
 
-    if (errors) {
-      var errMsg = { errors: [] };
-      errors.forEach(function(err) {
-        errMsg.errors.push(err.msg);
-      });
-    }
-    database('foods').where('id', request.params.id).update((updates), ['id', 'name', 'calories'])
-    .then(food => {
-      response.status(202).json(food[0])
-     })
-    .catch(error => {
-      response.status(500).json({ error });
+  if (errors) {
+    var errMsg = { errors: [] };
+    errors.forEach(function(err) {
+      errMsg.errors.push(err.msg);
     });
+  }
+  database('foods').where('id', request.params.id).update((updates), ['id', 'name', 'calories'])
+  .then(food => {
+    response.status(202).json(food[0])
+   })
+  .catch(error => {
+    response.status(500).json({ error });
   });
+});
 
 module.exports = app;

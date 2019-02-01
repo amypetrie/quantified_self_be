@@ -84,7 +84,7 @@ describe('foods API interraction', () => {
   chai.request(server)
   .delete('/api/v1/foods/20')
   .end((err, response) => {
-    response.should.have.status(204);
+    response.should.have.status(404);
     done();
     });
   });
