@@ -51,11 +51,10 @@ app.get('/api/v1/foods/:id', (request, response) => {
 app.delete('/api/v1/foods/:id', (request, response) => {
   return database('mealfoods').where('food_id', request.params.id).del()
   .then(() => database('foods').where('id', request.params.id).del())
-    .then(food => {
-      response.status(204).json({});
-    })
+    .then(foods => {
+        response.status(204);
     .catch(error => {
-      response.status(404).json({ error });
+      response.status(404);
     });
 });
 
