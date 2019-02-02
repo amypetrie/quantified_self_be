@@ -21,4 +21,15 @@ module.exports = {
     },
     useNullAsDefault: true
   },
+  production: {
+    client: 'pg',
+    connection: 'postgres://localhost/quantified_test',
+    migrations: {
+      directory: './db/migrations'
+    },
+    seeds: {
+      directory: './db/seeds/test'
+    },
+    useNullAsDefault: true
+  }
 };
