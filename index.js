@@ -11,7 +11,7 @@ const database = require('knex')(configuration);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8080);
 app.locals.title = 'quantified_self';
 app.use(function (request, response, next) {
   response.header("Access-Control-Allow-Origin",
@@ -60,13 +60,14 @@ app.get('/api/v1/foods/:id', (request, response) => {
 app.delete('/api/v1/foods/:id', (request, response) => {
   return database('mealfoods').where('food_id', request.params.id).del()
   .then(() => database('foods').where('id', request.params.id).del())
-    .then(foods => {
-        response.status(204);
+    .then(food => {
+      response.status(204).json();
     })
-    .catch(error => {
-      response.status(404);
-    });
+  .catch(error => {
+      response.status(500).json({ error });
+  });
 });
+
 
 app.post('/api/v1/foods', (request, response) => {
   const food = request.body;
