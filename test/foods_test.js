@@ -148,9 +148,9 @@ describe('PUT and POST API interaction', () => {
     });
   });
 
-  it('PATCH api/v1/foods/:id updates an existing food', done => {
+  it('PUT api/v1/foods/:id updates an existing food', done => {
   chai.request(server)
-  .patch('/api/v1/foods/1')
+  .put('/api/v1/foods/1')
   .send({ 'name': 'Peaches', 'calories': '50' })
   .end((err, response) => {
     response.should.have.status(202);
@@ -165,9 +165,9 @@ describe('PUT and POST API interaction', () => {
     });
   });
 
-  it('PATCH api/v1/foods/:id updates a single attribute of existing food', done => {
+  it('PUT api/v1/foods/:id updates a single attribute of existing food', done => {
   chai.request(server)
-  .patch('/api/v1/foods/1')
+  .put('/api/v1/foods/1')
   .send({ 'calories': '30'})
   .end((err, response) => {
     response.should.have.status(202);
@@ -182,9 +182,9 @@ describe('PUT and POST API interaction', () => {
     });
   });
 
-  it('PATCH api/v1/foods/:id does not update calories if NaN is provided', done => {
+  it('PUT api/v1/foods/:id does not update calories if NaN is provided', done => {
   chai.request(server)
-  .patch('/api/v1/foods/1')
+  .put('/api/v1/foods/1')
   .send({ 'calories': 'fdsa'})
   .end((err, response) => {
     response.should.have.status(500);
