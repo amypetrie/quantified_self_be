@@ -19,7 +19,7 @@ app.use(function (request, response, next) {
   response.header("Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept");
   response.header("Access-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE, OPTIONS");
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS");
   next();
 });
 
@@ -89,7 +89,7 @@ app.post('/api/v1/foods', (request, response) => {
       });
 });
 
-app.patch('/api/v1/foods/:id', (request, response) => {
+app.put('/api/v1/foods/:id', (request, response) => {
   const updates = request.body;
   const cals = Number(updates['calories']);
 
