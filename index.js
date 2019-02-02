@@ -11,7 +11,7 @@ const database = require('knex')(configuration);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8080);
 app.locals.title = 'quantified_self';
 app.use(function (request, response, next) {
   response.header("Access-Control-Allow-Origin",
