@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "11"
+cache: npm
+deploy:
+  skip_cleanup: true
+services:
+  - postgresql
+before_script:
+  - psql -c 'create database quantified_self;' -U postgres
