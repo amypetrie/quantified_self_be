@@ -4,3 +4,7 @@ node_js:
 cache: npm
 deploy:
   skip_cleanup: true
+services:
+  - postgresql
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
