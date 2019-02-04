@@ -1,0 +1,6 @@
+language: node_js
+node_js:
+  - "11"
+cache: npm
+deploy:
+  skip_cleanup: true
