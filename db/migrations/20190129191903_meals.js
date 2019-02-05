@@ -4,9 +4,6 @@ exports.up = function(knex, Promise) {
     knex.schema.createTable('meals', function(table) {
       table.increments('id').primary();
       table.integer('type');
-      table.integer('date_id').unsigned()
-      table.foreign('date_id')
-        .references('dates.id');
 
       table.timestamps(true, true);
     })

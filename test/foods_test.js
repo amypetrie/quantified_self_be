@@ -76,8 +76,8 @@ describe('foods API interraction', () => {
   .delete('/api/v1/foods/1')
   .end((err, response) => {
     response.should.have.status(204);
-    done();
     });
+    done();
   });
 
   it('DELETE api/v1/foods/:id returns 404 if food not found', done => {
@@ -85,8 +85,8 @@ describe('foods API interraction', () => {
   .delete('/api/v1/foods/20')
   .end((err, response) => {
     response.should.have.status(404);
-    done();
     });
+    done();
   });
 
 });
