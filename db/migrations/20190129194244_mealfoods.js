@@ -3,13 +3,17 @@ exports.up = function(knex, Promise) {
   return Promise.all([
     knex.schema.createTable('mealfoods', function(table) {
       table.increments('id').primary();
-      table.integer('meal_id').unsigned()
-      table.foreign('meal_id')
-        .references('meals.id');
+      table.integer('meal_id')
+           .unsigned()
+           .references('id')
+           .inTable('meals')
+           .onDelete('SET NULL');
 
-      table.integer('food_id').unsigned()
-      table.foreign('food_id')
-        .references('foods.id');
+      table.integer('food_id')
+           .unsigned()
+           .references('id')
+           .inTable('foods')
+           .onDelete('SET NULL');
 
       table.timestamps(true, true);
     })
