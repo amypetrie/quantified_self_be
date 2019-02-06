@@ -142,26 +142,33 @@ app.get('/api/v1/meals', (request, response) => {
       // console.log(nowMeals);
       uniqMeals.forEach(function(element) {
         let mealId = element['id'];
-        var foodArray = element['foods']
         meals.forEach(function(element) {
+          var foodArray = element['foods']
           if (element['id'] == mealId) {
             let numFind = parseInt(element['fid']);
             // console.log(numFind);
-            let tempThing = findFood(numFind);
+            let tempo = database('foods').where('id', numFind).select()
+              .then(food => {
+                if (food.length) {
+                  console.log(food);
+                  foodArray.push(food);
+
+                } else {
+                  console.log("no length")
+                }
+              })
+              .catch(error => {
+                console.log("did not work");
+              });
+            // console.log(tempo);
+            // let tempThing = findFood(numFind);
             // console.log(tempThing);
-            foodArray.push(tempThing);
+            // foodArray.push(tempThing);
           }
-        })
-        console.log(foodArray);
+          console.log(foodArray);
+        });
+        // console.log(foodArray);
       });
-      function findFood(id_in) {
-        database('foods')
-        .select('foods.id', 'foods.name', 'foods.calories')
-        .where({id: id_in}).first()
-        .then(food => {
-          foodArray.push(food);
-        })
-      };
       // nowMeals.forEach(function(element) {
       //   database('foods')
       //   .select('foods.id', 'foods.name', 'foods.calories')
