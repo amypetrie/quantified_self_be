@@ -113,49 +113,40 @@ app.patch('/api/v1/foods/:id', (request, response) => {
 });
 
 app.get('/api/v1/meals', (request, response) => {
-  // database('meals').select()
-  // return knex.raw(`SELECT * from meals INNER JOIN mealfoods ON meals.id=mealfoods.meal_id LEFT OUTER JOIN foods ON foods.id=mealfoods.food_id`)
-  // return knex.raw(`SELECT meals.id, meals.type, mealfoods.food_id from meals INNER JOIN mealfoods ON meals.id=mealfoods.meal_id ORDER BY meals.id`)
   database('meals')
   .join('mealfoods', 'mealfoods.meal_id', '=', 'meals.id')
   .join('foods', 'mealfoods.food_id', '=', 'foods.id')
   .select( 'meals.id AS meal_id', 'meals.type AS meal_type', 'meals.created_at AS meal_date', 'foods.id AS food_id', 'foods.name AS food_name', 'foods.calories AS food_calories')
-    .then(meals_out => {
-      console.log(meals_out);
-      eval(pry.it);
+    .then(mealsOut => {
+      // console.log(mealsOut);
       var tempMeals = []
       var uniqMeals = []
-      meals_out.forEach(function(element) {
-        tempMeals.push(`${element['id']},${element['type']}`);
+      mealsOut.forEach(function(element) {
+        tempMeals.push(element['meal_id']);
       });
       tempMeals = [...new Set(tempMeals)];
       tempMeals.forEach(function(element) {
-        var ar = element.split(',')
-        uniqMeals.push({id: `${ar[0]}`, name: `${ar[1]}`, foods:[]});
-      });
-      uniqMeals.forEach(function(element) {
-        let mealId = element['id'];
-        meals.forEach(function(element) {
-          var foodArray = element['foods']
-          if (element['id'] == mealId) {
-            let numFind = parseInt(element['fid']);
-            let tempo = database('foods').where('id', numFind).select()
-              .then(food => {
-                if (food.length) {
-                  console.log(food);
-                  foodArray.push(food);
-                } else {
-                  console.log("no length")
-                }
-              })
-              .catch(error => {
-                console.log("did not work");
-              });
-          }
-          console.log(foodArray);
+        var found = mealsOut.find(function(data) {
+          return data['meal_id'] === element;
         });
+        uniqMeals.push(
+          {'id': found['meal_id'],
+            'name': found['meal_type'],
+            'date': found['meal_date'],
+            'foods': []
+          }
+        );
       });
-      response.status(200).json(meals);
+      mealsOut.forEach(function(element) {
+        var found = uniqMeals.find(ml => ml['id'] == element['meal_id']);
+        found['foods'].push(
+          {'id': element['food_id'],
+           'name': element['food_name'],
+           'calories': element['food_calories']
+          }
+        );
+      });
+      response.status(200).json(uniqMeals);
     })
     .catch((error) => {
       response.status(500).json({ error });
