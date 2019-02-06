@@ -117,9 +117,17 @@ app.patch('/api/v1/foods/:id', (request, response) => {
 });
 
 app.get('/api/v1/meals', (request, response) => {
-  database('meals').select()
-    .then((meals) => {
+  // database('meals').select()
+  // return knex.raw(`SELECT * from meals INNER JOIN mealfoods ON meals.id=mealfoods.meal_id LEFT OUTER JOIN foods ON foods.id=mealfoods.food_id`)
+  // return knex.raw(`SELECT meals.id, meals.type, mealfoods.food_id from meals INNER JOIN mealfoods ON meals.id=mealfoods.meal_id ORDER BY meals.id`)
+  database('meals')
+    .select('meals.id', 'meals.type', 'mealfoods.food_id')
+    .join('mealfoods', 'meals.id', '=', 'mealfoods.meal_id')
+    .orderBy('meals.id')
+    .then(meals => {
       response.status(200).json(meals);
+      // let mealsFound = response.body.rows;
+      // eval(pry.it);
     })
     .catch((error) => {
       response.status(500).json({ error });
