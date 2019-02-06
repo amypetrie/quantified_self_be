@@ -125,19 +125,14 @@ app.get('/api/v1/meals', (request, response) => {
     .join('mealfoods', 'meals.id', '=', 'mealfoods.meal_id')
     .orderBy('meals.id')
     .then(meals => {
-      const nowMeals = []
-      // console.log(meals);
+      var nowMeals = []
+      console.log(meals);
       meals.forEach(function(element) {
         let lookUp = element['id'];
-        database('meals')
-        .select('meals.id')
-        .where({id: lookUp}).first()
-        .then(meal => {
-          // console.log(meal);
-          nowMeals.push(Object.values(meal));
-          console.log(nowMeals);
-        })
+          nowMeals.push(lookUp);
       });
+      nowMeals = [...new Set(nowMeals)];
+      console.log(nowMeals);
       meals.forEach(function(element) {
         let lookUp = element['food_id'];
         database('foods')
