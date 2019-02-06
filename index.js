@@ -126,18 +126,30 @@ app.get('/api/v1/meals', (request, response) => {
     .orderBy('meals.id')
     .then(meals => {
       var nowMeals = []
-      console.log(meals);
+      var tempMeals = []
+      var uniqMeals = []
+      // console.log(meals);
+      meals.forEach(function(element) {
+        tempMeals.push(`${element['id']},${element['type']}`);
+      });
+      tempMeals = [...new Set(tempMeals)];
+      console.log(tempMeals);
+      tempMeals.forEach(function(element) {
+        var ar = element.split(',')
+        uniqMeals.push({id: `${ar[0]}`, name: `${ar[1]}`, foods:[]});
+      });
+      console.log(uniqMeals);
+      // console.log(meals);
       meals.forEach(function(element) {
         let lookUp = element['id'];
           nowMeals.push(lookUp);
       });
       nowMeals = [...new Set(nowMeals)];
-      console.log(nowMeals);
-      meals.forEach(function(element) {
-        let lookUp = element['food_id'];
+      // console.log(nowMeals);
+      nowMeals.forEach(function(element) {
         database('foods')
         .select('foods.id', 'foods.name', 'foods.calories')
-        .where({id: lookUp}).first()
+        .where({id: element}).first()
         .then(food => {
           // console.log(food);
         })

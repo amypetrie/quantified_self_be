@@ -37,7 +37,7 @@ describe('foods API interraction', () => {
     // console.log(response.body);
     response.should.be.json;
     // console.log(response);
-    eval(pry.it);
+    // eval(pry.it);
     response.body.should.be.a('array');
     response.body.length.should.equal(12);
     response.body[0].should.have.property('id');
