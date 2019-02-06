@@ -3,10 +3,14 @@ const app = express();
 const bodyParser = require('body-parser');
 const pry = require('pryjs');
 const expressValidator = require('express-validator');
-
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
+const knexConfig = require('./knexfile');
+const Knex = require('knex');
+const knex = Knex(knexConfig.development);
+const { Model } = require('objection');
+Model.knex(knex);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -71,7 +75,6 @@ app.delete('/api/v1/foods/:id', (request, response) => {
 
 app.post('/api/v1/foods', (request, response) => {
   const food = request.body;
-
   for (let requiredParameter of ['name', 'calories']) {
     if (!food[requiredParameter]) {
       return response
@@ -92,12 +95,9 @@ app.post('/api/v1/foods', (request, response) => {
 app.put('/api/v1/foods/:id', (request, response) => {
   const updates = request.body;
   const cals = Number(updates['calories']);
-
   request.checkBody('name', 'Invalid name').isAlpha();
   request.checkBody('calories', 'Invalid calories').isNumeric();
-
   var errors = request.validationErrors();
-
   if (errors) {
     var errMsg = { errors: [] };
     errors.forEach(function(err) {
@@ -111,6 +111,47 @@ app.put('/api/v1/foods/:id', (request, response) => {
   .catch(error => {
     response.status(500).json({ error });
   });
+});
+
+app.get('/api/v1/meals', (request, response) => {
+  database('meals')
+  .join('mealfoods', 'mealfoods.meal_id', '=', 'meals.id')
+  .join('foods', 'mealfoods.food_id', '=', 'foods.id')
+  .select( 'meals.id AS meal_id', 'meals.type AS meal_type', 'meals.created_at AS meal_date', 'foods.id AS food_id', 'foods.name AS food_name', 'foods.calories AS food_calories')
+    .then(mealsOut => {
+      // console.log(mealsOut);
+      var tempMeals = []
+      var uniqMeals = []
+      mealsOut.forEach(function(element) {
+        tempMeals.push(element['meal_id']);
+      });
+      tempMeals = [...new Set(tempMeals)];
+      tempMeals.forEach(function(element) {
+        var found = mealsOut.find(function(data) {
+          return data['meal_id'] === element;
+        });
+        uniqMeals.push(
+          {'id': found['meal_id'],
+            'name': found['meal_type'],
+            'date': found['meal_date'],
+            'foods': []
+          }
+        );
+      });
+      mealsOut.forEach(function(element) {
+        var found = uniqMeals.find(ml => ml['id'] == element['meal_id']);
+        found['foods'].push(
+          {'id': element['food_id'],
+           'name': element['food_name'],
+           'calories': element['food_calories']
+          }
+        );
+      });
+      response.status(200).json(uniqMeals);
+    })
+    .catch((error) => {
+      response.status(500).json({ error });
+    });
 });
 
 module.exports = app;
