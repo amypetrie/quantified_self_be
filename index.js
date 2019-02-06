@@ -74,7 +74,6 @@ app.delete('/api/v1/foods/:id', (request, response) => {
 
 app.post('/api/v1/foods', (request, response) => {
   const food = request.body;
-
   for (let requiredParameter of ['name', 'calories']) {
     if (!food[requiredParameter]) {
       return response
@@ -95,12 +94,9 @@ app.post('/api/v1/foods', (request, response) => {
 app.patch('/api/v1/foods/:id', (request, response) => {
   const updates = request.body;
   const cals = Number(updates['calories']);
-
   request.checkBody('name', 'Invalid name').isAlpha();
   request.checkBody('calories', 'Invalid calories').isNumeric();
-
   var errors = request.validationErrors();
-
   if (errors) {
     var errMsg = { errors: [] };
     errors.forEach(function(err) {
@@ -121,38 +117,33 @@ app.get('/api/v1/meals', (request, response) => {
   // return knex.raw(`SELECT * from meals INNER JOIN mealfoods ON meals.id=mealfoods.meal_id LEFT OUTER JOIN foods ON foods.id=mealfoods.food_id`)
   // return knex.raw(`SELECT meals.id, meals.type, mealfoods.food_id from meals INNER JOIN mealfoods ON meals.id=mealfoods.meal_id ORDER BY meals.id`)
   database('meals')
-    .select('meals.id', 'meals.type', 'mealfoods.food_id AS fid')
-    .join('mealfoods', 'meals.id', '=', 'mealfoods.meal_id')
-    .orderBy('meals.id')
-    .then(meals => {
+  .join('mealfoods', 'mealfoods.meal_id', '=', 'meals.id')
+  .join('foods', 'mealfoods.food_id', '=', 'foods.id')
+  .select( 'meals.id AS meal_id', 'meals.type AS meal_type', 'meals.created_at AS meal_date', 'foods.id AS food_id', 'foods.name AS food_name', 'foods.calories AS food_calories')
+    .then(meals_out => {
+      console.log(meals_out);
+      eval(pry.it);
       var tempMeals = []
       var uniqMeals = []
-      // console.log(meals);
-      meals.forEach(function(element) {
+      meals_out.forEach(function(element) {
         tempMeals.push(`${element['id']},${element['type']}`);
       });
       tempMeals = [...new Set(tempMeals)];
-      // console.log(tempMeals);
       tempMeals.forEach(function(element) {
         var ar = element.split(',')
         uniqMeals.push({id: `${ar[0]}`, name: `${ar[1]}`, foods:[]});
       });
-      // console.log(uniqMeals);
-      // console.log(meals);
-      // console.log(nowMeals);
       uniqMeals.forEach(function(element) {
         let mealId = element['id'];
         meals.forEach(function(element) {
           var foodArray = element['foods']
           if (element['id'] == mealId) {
             let numFind = parseInt(element['fid']);
-            // console.log(numFind);
             let tempo = database('foods').where('id', numFind).select()
               .then(food => {
                 if (food.length) {
                   console.log(food);
                   foodArray.push(food);
-
                 } else {
                   console.log("no length")
                 }
@@ -160,23 +151,10 @@ app.get('/api/v1/meals', (request, response) => {
               .catch(error => {
                 console.log("did not work");
               });
-            // console.log(tempo);
-            // let tempThing = findFood(numFind);
-            // console.log(tempThing);
-            // foodArray.push(tempThing);
           }
           console.log(foodArray);
         });
-        // console.log(foodArray);
       });
-      // nowMeals.forEach(function(element) {
-      //   database('foods')
-      //   .select('foods.id', 'foods.name', 'foods.calories')
-      //   .where({id: element}).first()
-      //   .then(food => {
-      //     // console.log(food);
-      //   })
-      // });
       response.status(200).json(meals);
     })
     .catch((error) => {
