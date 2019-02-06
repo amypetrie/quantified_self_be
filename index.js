@@ -121,11 +121,10 @@ app.get('/api/v1/meals', (request, response) => {
   // return knex.raw(`SELECT * from meals INNER JOIN mealfoods ON meals.id=mealfoods.meal_id LEFT OUTER JOIN foods ON foods.id=mealfoods.food_id`)
   // return knex.raw(`SELECT meals.id, meals.type, mealfoods.food_id from meals INNER JOIN mealfoods ON meals.id=mealfoods.meal_id ORDER BY meals.id`)
   database('meals')
-    .select('meals.id', 'meals.type', 'mealfoods.food_id')
+    .select('meals.id', 'meals.type', 'mealfoods.food_id AS fid')
     .join('mealfoods', 'meals.id', '=', 'mealfoods.meal_id')
     .orderBy('meals.id')
     .then(meals => {
-      var nowMeals = []
       var tempMeals = []
       var uniqMeals = []
       // console.log(meals);
@@ -133,27 +132,44 @@ app.get('/api/v1/meals', (request, response) => {
         tempMeals.push(`${element['id']},${element['type']}`);
       });
       tempMeals = [...new Set(tempMeals)];
-      console.log(tempMeals);
+      // console.log(tempMeals);
       tempMeals.forEach(function(element) {
         var ar = element.split(',')
         uniqMeals.push({id: `${ar[0]}`, name: `${ar[1]}`, foods:[]});
       });
-      console.log(uniqMeals);
+      // console.log(uniqMeals);
       // console.log(meals);
-      meals.forEach(function(element) {
-        let lookUp = element['id'];
-          nowMeals.push(lookUp);
-      });
-      nowMeals = [...new Set(nowMeals)];
       // console.log(nowMeals);
-      nowMeals.forEach(function(element) {
+      uniqMeals.forEach(function(element) {
+        let mealId = element['id'];
+        var foodArray = element['foods']
+        meals.forEach(function(element) {
+          if (element['id'] == mealId) {
+            let numFind = parseInt(element['fid']);
+            // console.log(numFind);
+            let tempThing = findFood(numFind);
+            // console.log(tempThing);
+            foodArray.push(tempThing);
+          }
+        })
+        console.log(foodArray);
+      });
+      function findFood(id_in) {
         database('foods')
         .select('foods.id', 'foods.name', 'foods.calories')
-        .where({id: element}).first()
+        .where({id: id_in}).first()
         .then(food => {
-          // console.log(food);
+          foodArray.push(food);
         })
-      });
+      };
+      // nowMeals.forEach(function(element) {
+      //   database('foods')
+      //   .select('foods.id', 'foods.name', 'foods.calories')
+      //   .where({id: element}).first()
+      //   .then(food => {
+      //     // console.log(food);
+      //   })
+      // });
       response.status(200).json(meals);
     })
     .catch((error) => {
