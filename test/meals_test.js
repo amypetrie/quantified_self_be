@@ -34,7 +34,7 @@ describe('foods API interraction', () => {
   .get('/api/v1/meals')
   .end((err, response) => {
     response.should.have.status(200);
-    console.log(response.body);
+    // console.log(response.body);
     response.should.be.json;
     // console.log(response);
     eval(pry.it);
