@@ -45,7 +45,7 @@ app.get('/api/v1/foods', (request, response) => {
     });
 });
 
-app.get('/api/v1/foods', (request, response) => {
+app.get('/api/v1/foods/:id', (request, response) => {
   database('foods').where('id', request.params.id).select()
     .then(food => {
       if (food.length) {
