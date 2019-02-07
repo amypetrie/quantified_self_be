@@ -83,16 +83,4 @@ describe('meals API interraction', () => {
     });
   });
 
-  xit('POST api/v1/foods does not post if required param name is missing', done => {
-  chai.request(server)
-  .post('/api/v1/foods')
-  .send({ 'calories': '200' })
-  .end((err, response) => {
-    response.should.have.status(422);
-    response.body.should.be.a('object');
-    response.body.should.have.property('error');
-    done();
-    });
-  });
-
 });
