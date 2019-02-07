@@ -118,7 +118,7 @@ app.get('/api/v1/meals', (request, response) => {
   .join('mealfoods', 'mealfoods.meal_id', '=', 'meals.id')
   .join('foods', 'mealfoods.food_id', '=', 'foods.id')
   .select( 'meals.id AS meal_id', 'meals.type AS meal_type', 'meals.created_at AS meal_date', 'foods.id AS food_id', 'foods.name AS food_name', 'foods.calories AS food_calories')
-    .then(mealsOut => {
+  .then(mealsOut => {
       // console.log(mealsOut);
       var tempMeals = []
       var uniqMeals = []
@@ -148,6 +148,23 @@ app.get('/api/v1/meals', (request, response) => {
         );
       });
       response.status(200).json(uniqMeals);
+    })
+    .catch((error) => {
+      response.status(500).json({ error });
+    });
+});
+
+app.get('/api/v1/meals/:id/foods', (request, response) => {
+  database('meals')
+  .join('mealfoods', 'mealfoods.meal_id', '=', 'meals.id')
+  .join('foods', 'mealfoods.food_id', '=', 'foods.id')
+  .where('meals.id', request.params.id)
+  .select( 'meals.id AS meal_id', 'meals.type AS meal_type', 'meals.created_at AS meal_date', 'foods.id AS food_id', 'foods.name AS food_name', 'foods.calories AS food_calories')
+  .then(mealOut => {
+      console.log(mealOut);
+      var tempMeals = []
+      var uniqMeals = []
+      response.status(200).json(mealOut);
     })
     .catch((error) => {
       response.status(500).json({ error });
