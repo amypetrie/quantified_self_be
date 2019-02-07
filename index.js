@@ -118,40 +118,82 @@ app.get('/api/v1/meals', (request, response) => {
   .join('mealfoods', 'mealfoods.meal_id', '=', 'meals.id')
   .join('foods', 'mealfoods.food_id', '=', 'foods.id')
   .select( 'meals.id AS meal_id', 'meals.type AS meal_type', 'meals.created_at AS meal_date', 'foods.id AS food_id', 'foods.name AS food_name', 'foods.calories AS food_calories')
-    .then(mealsOut => {
-      // console.log(mealsOut);
-      var tempMeals = []
-      var uniqMeals = []
-      mealsOut.forEach(function(element) {
-        tempMeals.push(element['meal_id']);
-      });
-      tempMeals = [...new Set(tempMeals)];
-      tempMeals.forEach(function(element) {
-        var found = mealsOut.find(function(data) {
-          return data['meal_id'] === element;
-        });
-        uniqMeals.push(
-          {'id': found['meal_id'],
-            'name': found['meal_type'],
-            'date': found['meal_date'],
-            'foods': []
-          }
-        );
-      });
-      mealsOut.forEach(function(element) {
-        var found = uniqMeals.find(ml => ml['id'] == element['meal_id']);
-        found['foods'].push(
-          {'id': element['food_id'],
-           'name': element['food_name'],
-           'calories': element['food_calories']
-          }
-        );
-      });
-      response.status(200).json(uniqMeals);
-    })
-    .catch((error) => {
-      response.status(500).json({ error });
+  .then(mealsOut => {
+    // console.log(mealsOut);
+    var tempMeals = []
+    var uniqMeals = []
+    mealsOut.forEach(function(element) {
+      tempMeals.push(element['meal_id']);
     });
+    tempMeals = [...new Set(tempMeals)];
+    tempMeals.forEach(function(element) {
+      var found = mealsOut.find(function(data) {
+        return data['meal_id'] === element;
+      });
+      uniqMeals.push(
+        {'id': found['meal_id'],
+          'name': found['meal_type'],
+          'date': found['meal_date'],
+          'foods': []
+        }
+      );
+    });
+    mealsOut.forEach(function(element) {
+      var found = uniqMeals.find(ml => ml['id'] == element['meal_id']);
+      found['foods'].push(
+        {'id': element['food_id'],
+         'name': element['food_name'],
+         'calories': element['food_calories']
+        }
+      );
+    });
+    response.status(200).json(uniqMeals);
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
+});
+
+app.get('/api/v1/meals/:id/foods', (request, response) => {
+  database('meals')
+  .join('mealfoods', 'mealfoods.meal_id', '=', 'meals.id')
+  .join('foods', 'mealfoods.food_id', '=', 'foods.id')
+  .where('meals.id', request.params.id)
+  .select( 'meals.id AS meal_id', 'meals.type AS meal_type', 'meals.created_at AS meal_date', 'foods.id AS food_id', 'foods.name AS food_name', 'foods.calories AS food_calories')
+  .then(mealsOut => {
+    // console.log(mealsOut);
+    var tempMeals = []
+    var uniqMeals = []
+    mealsOut.forEach(function(element) {
+      tempMeals.push(element['meal_id']);
+    });
+    tempMeals = [...new Set(tempMeals)];
+    tempMeals.forEach(function(element) {
+      var found = mealsOut.find(function(data) {
+        return data['meal_id'] === element;
+      });
+      uniqMeals.push(
+        {'id': found['meal_id'],
+          'name': found['meal_type'],
+          'date': found['meal_date'],
+          'foods': []
+        }
+      );
+    });
+    mealsOut.forEach(function(element) {
+      var found = uniqMeals.find(ml => ml['id'] == element['meal_id']);
+      found['foods'].push(
+        {'id': element['food_id'],
+         'name': element['food_name'],
+         'calories': element['food_calories']
+        }
+      );
+    });
+    response.status(200).json(uniqMeals);
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
 });
 
 module.exports = app;
