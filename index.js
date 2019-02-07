@@ -204,4 +204,20 @@ app.post('/api/v1/meals/:meal_id/foods/:id', (request, response) => {
       });
 });
 
+app.delete('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
+  const meal_in = request.params.meal_id;
+  const food_in = request.params.food_id;
+  let food_out;
+  let meal_out;
+  database('mealFoods').where({food_id: food_in}).and({meal_id: meal_in}).del()
+  .then(mealfood => {
+    response.json({
+      "message": `Successfully removed!`
+    })
+  })
+  .catch(error => {
+    response.status(404).json({ error });
+  })
+});
+
 module.exports = app;
