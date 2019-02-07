@@ -7,10 +7,6 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 const knexConfig = require('./knexfile');
-const Knex = require('knex');
-const knex = Knex(knexConfig.development);
-const { Model } = require('objection');
-Model.knex(knex);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -119,7 +115,6 @@ app.get('/api/v1/meals', (request, response) => {
   .join('foods', 'mealfoods.food_id', '=', 'foods.id')
   .select( 'meals.id AS meal_id', 'meals.type AS meal_type', 'meals.created_at AS meal_date', 'foods.id AS food_id', 'foods.name AS food_name', 'foods.calories AS food_calories')
   .then(mealsOut => {
-    // console.log(mealsOut);
     var tempMeals = []
     var uniqMeals = []
     mealsOut.forEach(function(element) {
@@ -194,6 +189,19 @@ app.get('/api/v1/meals/:id/foods', (request, response) => {
   .catch((error) => {
     response.status(500).json({ error });
   });
+});
+
+app.post('/api/v1/meals/:meal_id/foods/:id', (request, response) => {
+  var food_in = request.params.id;
+  var meal_in = request.params.meal_id;
+    database('mealfoods').insert({ meal_id: meal_in, food_id: food_in })
+      .then(food => {
+        var msg = {"message": "Successfully added FOODNAME to MEALNAME"}
+        response.status(201).json(msg)
+      })
+      .catch(error => {
+        response.status(500).json({ error });
+      });
 });
 
 module.exports = app;
