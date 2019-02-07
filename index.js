@@ -196,7 +196,7 @@ app.post('/api/v1/meals/:meal_id/foods/:id', (request, response) => {
   var meal_in = request.params.meal_id;
     database('mealfoods').insert({ meal_id: meal_in, food_id: food_in })
       .then(food => {
-        var msg = {"message": "Successfully added FOODNAME to MEALNAME"}
+        var msg = {"message": "Successfully added!"}
         response.status(201).json(msg)
       })
       .catch(error => {
