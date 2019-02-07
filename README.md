@@ -1,63 +1,69 @@
-# 📱 Project/App Title
+# 📱 Quantified Self
 
-> Subtitle here
+> A food calorie goal API.
 
-Introdution/Description of what the program does.
+The Quantified Self API is responsible for storing and returning calorie-related information to the client app. The app uses a JavaScript/Express environment with knex access to a PostgreSQL database.
 
 ## ⚙️ Initial Setup
 
-OS X & Linux:
+OS X & Linux Command Line:
 
 ```sh
-bundle
-rails s (to spin up the server)
+npm install
+
 ```
 
 ## 🕹 How to Use
 
-Describe the app's features
+All data returned is in standardized JSON format.
+GET request query parameters should be supplied in PARAMS.
+POST and DELETE parameters should be supplied in the request body.
 
-FEATURE
-stuff it needs
-stuff it does
+GET /api/v1/foods
+Returns all foods in the database with their calories.
 
-FEATURE
-stuff it needs
-stuff it does
+GET api/v1/foods/:id
+Returns the food matching the supplied ID.
 
-FEATURE
-stuff it needs
-stuff it does
+DELETE /api/v1/foods/:id
+Deletes the food matching the supplied ID.
+
+POST /api/v1/foods
+Adds a food when supplying food info in the following format:
+{ 'name': 'Pizza', 'calories': '200' }
+
+PUT /api/v1/foods/:id
+Edits a food when supplying food info in the following format:
+{ 'name': 'Pizza', 'calories': '215' }
+
+GET /api/v1/meals
+Returns all meals in the database with their associated foods.
+
+GET /api/v1/meals/:id/foods
+Returns all foods associated with the meal matching the supplied ID.
 
 ## 🚧 Known Issues
 
-Describe the app's known limitations/problems
-
-FEATURE
-stuff it needs
-stuff it does
-
-FEATURE
-stuff it needs
-stuff it does
-
-FEATURE
-stuff it needs
-stuff it does
+The app does not yet give the client the ability to add, edit, or delete meals or meal data.
 
 ## 📊 How to Run Tests
 
 OS X & Linux:
 
 ```sh
-rspec (to run tests)
+mocha --exit
 ```
 
 ## 🏗 Tech Stack List
 
-- Ruby v 2.5
 - JavaScript
-- HTML/CSS
+- Node v10.15.0
+- NPM 6.4.1
+- Express 4.16.4
+- chai 4.2.0,
+- chai-http 4.2.1,
+- mocha 5.2.0
+- knex 0.16.3
 
 ## 📥 How To Contribute
 
@@ -70,11 +76,8 @@ rspec (to run tests)
 ## 🚀 Core Contributors
 
 **Amy Petrie**
-Twitter:[@<yours here>](https://twitter.com/<yours here>)
-Github:[https://github.com/<yours here>](https://github.com/<yours here>/)
-Web:[http://www.<yours here>](http://www.<yours here>)
+Github:[https://github.com/amypetrie](https://github.com/amypetrie)
 
 **Norm Schultz**
-Twitter:[@normanrs](https://twitter.com/normanrs)
 Github:[https://github.com/normanrs](https://github.com/normanrs/)
 Web:[http://www.normanrschultz.com](http://www.normanrschultz.com)
