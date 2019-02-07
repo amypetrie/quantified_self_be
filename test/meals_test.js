@@ -66,19 +66,13 @@ describe('meals API interraction', () => {
     });
   });
 
-  xit('POST /api/v1/meals/:meal_id/foods/:id adds food to meal', done => {
+  it('POST /api/v1/meals/:meal_id/foods/:id adds food to meal', done => {
   chai.request(server)
-  .post('/api/v1/meals/:meal_id/foods/:id')
-  .send({ 'name': 'Pizza', 'calories': '200' })
+  .post('/api/v1/meals/1/foods/1')
   .end((err, response) => {
     response.should.have.status(201);
     response.body.should.be.a('object');
-    response.body.should.have.property('id');
-    response.body.id.should.equal(13);
-    response.body.should.have.property('name');
-    response.body.name.should.equal('Pizza');
-    response.body.should.have.property('calories');
-    response.body.calories.should.equal(200);
+    response.body.should.have.property('message');
     done();
     });
   });
