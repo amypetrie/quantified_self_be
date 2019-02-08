@@ -77,4 +77,14 @@ describe('meals API interraction', () => {
     });
   });
 
+  it('DELETE /api/v1/meals/:meal_id/foods/:id deletes the food', done => {
+  chai.request(server)
+  .delete('/api/v1/meals/1/foods/1')
+  .end((err, response) => {
+    eval(pry.it);
+    response.should.have.status(204);
+    });
+    done();
+  });
+
 });
